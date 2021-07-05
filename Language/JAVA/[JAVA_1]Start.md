@@ -136,3 +136,19 @@ System.out.println("Hello World!!")
 
   - Complie 된 것을 Java Virtual Machine 으로 보내고 Virtual Machine 에서 computer 로 가는 것
 
+
+
+
+
+## Point : Java 가 어떻게 저장되는가?
+
+![image-20210705220420982]([JAVA_1]Start.assets/image-20210705220420982.png)
+
+1. code 상에서 `public class HelloWorldGUIApp` 을 보자
+2. Navigator 상에서 `HelloWorldApp.class`를 보자
+
+- java 파일이름은 `HelloWorldGUI`인데 왜 `.class` 파일을 `HelloWorldGUIApp`일까????
+  - 아무래도 `public class` 를 따라가는 것 같다.
+
+
+
