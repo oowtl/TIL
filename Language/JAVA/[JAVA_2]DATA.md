@@ -160,3 +160,29 @@ public class Datatype{
   	}
   }
   ```
+
+
+
+## 여러가지 툴을 통해서 문자열을 수정할 수 있다!
+
+- ```java
+  
+  public class StringOperation {
+  
+  	public static void main(String[] args) {
+  		// TODO Auto-generated method stub
+  		
+  		System.out.println("Hello World".length()); // 11
+  		// 뭐든지 생각할 때는 최대한 크게 생각하는 것이 좋다. 예시 : 이런 글자들도 1억 글자라고 생각한다.
+  		
+  		System.out.println("Hello, leezche ... bye. ".replace("leezche", "egoing")); // Hello, egoing ... bye. 
+  		System.out.println("Hello, [[[name]]] ... bye. ".replace("[[[name]]]", "duru")); // Hello, duru ... bye.
+  		
+  	}
+  
+  }
+  
+  ```
+
+  - `.length` :  해당 하는 문자열의 길이를 알려주는 메소드
+  - `.replace( A, B)` : 해당하는 문자열에서 A 를 찾아서 B 로 바꿔주는 메소드
