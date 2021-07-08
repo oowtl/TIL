@@ -38,3 +38,69 @@
 
   
 
+## for
+
+- 몇 번 반복해라 를 수행하는 반복문
+- 한번 실행이 되고 끝이다.
+
+
+
+### 형태
+
+- ```java
+  for (int j=0; j < 3; j++) {
+      System.out.println(2);
+      System.out.println(3);
+  }
+  ```
+
+  - ```java
+    for ( 사용할 변수 초기화; boolean 조건문; 변수 증가량 ) {
+        실행문
+    }
+    ```
+
+
+
+
+
+### 반복문 활용하기
+
+- ```java
+  String[] users = new String[3];
+  users[0] = "junn";
+  users[1] = "mcg";
+  users[2] = "gary";
+  
+  for ( int i=0; i < users.length; i++) {
+      System.out.println("<li>" + users[i] + "</li>");
+  }
+  
+  // 결과
+  <li>junn</li>
+  <li>mcg</li>
+  <li>gary</li>
+  ```
+
+
+
+### 주의할 점
+
+- 인덱스 에러
+  - 배열의 숫자를 정해놓고 그것보다 덜 하던지 더 하면 안된다!!!
+
+
+
+## break
+
+- 반복문을 종료한다.
+
+- ```java
+  for (int i=0; i < users.length; i++) {
+  			String currentId = users[i];
+  			if (currentId.equals(inputId)) {			
+  				break;
+  			}
+  		}
+  ```
+

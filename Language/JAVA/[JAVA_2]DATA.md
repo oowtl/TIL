@@ -42,28 +42,6 @@ public class Datatype{
 
 
 
-## Tip : 쉽게 파일 추가하기
-
-1. 우클릭 -> New -> Class
-
-2. ![image-20210705223318752]([JAVA_2]DATA.assets/image-20210705223318752.png)
-
-   - 중간의 `public static void main(String[] args)`를 사용하면 번거로운 것도 한번에 추가해준다.
-
-3. 결과
-
-   - ```JAVA
-     
-     public class Number {
-     
-     	public static void main(String[] args) {
-     		// TODO Auto-generated method stub
-     
-     	}
-     
-     }
-     ```
-
 
 
 ## Number and operation
@@ -92,12 +70,6 @@ public class Datatype{
   ```
 
 
-
-## Tip : 이클립스 세로줄 없애기
-
-- Window -> Preferences -> General -> Editors -> Text Editors
-
-  Show print margin 해제
 
 
 
@@ -132,7 +104,86 @@ public class Datatype{
 
 
 
-## 이스케이프 문자
+## Boolean
+
+- Boolean 은 두 가지 타입을 가진 데이터 타입이다.
+
+  - `참` 과 `거짓`
+
+  - ```java
+    System.out.println(true);
+    System.out.println(false);
+    ```
+
+- 주의할 점
+
+  - 따옴표로 감싸지지 않은 `true`, `flase` 는 변수명으로 사용하지 않는다.
+
+  - ```java
+    String true = "Hello World"; // X
+    ```
+
+    - 이렇게 컴퓨터가 사용하기 때문에 사용해서는 않되는 것을 reserved word 라고 한다.
+
+
+
+## 추가사항
+
+
+
+#### Primitive and non Primitive
+
+- 데이터 타입들을 두 가지의 기준으로 볼 수 있다.
+
+- primitive
+  - 원시
+  - 더이상 쪼갤 수 없는 데이터
+  - int, double, float, long, char....
+- non primitive
+  - string, file, date , class
+
+...
+
+
+
+
+
+## Tips
+
+
+
+### 쉽게 파일 추가하기
+
+1. 우클릭 -> New -> Class
+
+2. ![image-20210705223318752]([JAVA_2]DATA.assets/image-20210705223318752.png)
+
+   - 중간의 `public static void main(String[] args)`를 사용하면 번거로운 것도 한번에 추가해준다.
+
+3. 결과
+
+   - ```JAVA
+     public class Number {
+     
+     	public static void main(String[] args) {
+     		// TODO Auto-generated method stub
+     
+     	}
+     
+     }
+     ```
+
+
+
+### 이클립스 세로 빨간줄 없애기
+
+- Window -> Preferences -> General -> Editors -> Text Editors
+
+  Show print margin 해제
+
+
+
+### 이스케이프 문자
 
 - `\` : 각 기호들이 해야할 일에서 도망치게 해준다.
 
@@ -163,7 +214,7 @@ public class Datatype{
 
 
 
-## 여러가지 툴을 통해서 문자열을 수정할 수 있다!
+### 여러가지 툴을 통해서 문자열을 수정할 수 있다!
 
 - ```java
   
