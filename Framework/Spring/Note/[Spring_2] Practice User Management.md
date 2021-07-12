@@ -722,6 +722,8 @@
   ```
 
   - 이 코드의 단점은 join 의 기능 중에 중복을 방지하는 기능이 있는데, 그것을 활용하지 않는 것이다.
+  - `Member findMember = memberService.findOne(saveId).get();`
+    - `. get()` :  Optional 을 벗겨주는 역활을 하는 것 같다.
 
 
 
