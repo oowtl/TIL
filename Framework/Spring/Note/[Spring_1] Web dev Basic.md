@@ -210,10 +210,11 @@
   - 먼저 class 를 생성해준다.
   - class 에서 getter setter 를 생성해준다.
     - alt + insert 를 눌러보면 생성할 수 있는 것이 나와있다.
+      - `cmd` + `n`
     - `setName` : 들어올 때 사용하는 것
     - `getName` : 내보낼 때 사용하는 것
   - class 를 활용해서 name 을 받아서 사용한다.
-
+  
 - `http://localhost:8080/hello-api?name=spring!!!`
 
   - `{"name":"spring!!!"}`
