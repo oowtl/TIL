@@ -49,3 +49,80 @@
 - 추가적으로는 바라본다는 것이, 별다른 것이 없고 사용한다는 느낌도 있는 것 같다.
   위의 코드에서 멤버 서비스를 사용한다는 것이니까.
   어찌됫든 `public class { ... }` 에 속하는 것일테니 해당 class 에서 사용한다는 느낌인 것 같다.
+
+
+
+
+
+### test
+
+- 현대 프로그래밍은 test 코드가 필수적이다. 항상 출력으로만 알 수는 없기 때문이다.
+- test 의 문법
+  - given
+    - 무엇이 주어지는 상황인지 체크한다.
+  - when
+    - 주어진 상황으로 어떻게 할지를 본다.
+  - then
+    - 무엇을 하고 난 다음의 상황을 체크한다.
+
+ 
+
+## 좋은 설계
+
+- 단일 체계 원칙이라는 것은 각각을 참조를 하는데 그 참조하는 값이 오로지 참조하는 곳에서만 변경이 되는 것이다.
+  - 내가 가격을 산정하는데, 할인되는 가격을 알고 싶다면??
+    - 총 가격을 산정하는 곳에서 이리저리 조정하는 것이 아니라 할인에 대한 항목들을 따로, 다른 공간에서 계산을 수행해야 한다는 것이다.
+    - 그러면 할인에 대한 정책들이 수정될 때는 그곳에서만 수정하면 되니까 유지보수도 원활하게 할 수 있다.
+
+
+
+## `assertThat`
+
+- 이 메서드는 Junit 과 assertJ 라는 곳 두개에서 사용되는 것이다.
+
+  - 이 설명은 assertJ 에 대한 내용이다.
+
+- 두 값(객체)를 비교할 때 주로 사용하는 것이다.
+
+- 구조
+
+  - ```java
+    assertThat(T actual).isEqualTo(expected)
+    ```
+
+    - 파라미터 : 비교 대상의 실제 값
+    - 뒤 : 비교하는 방법과 비교하는 대상
+
+
+
+
+
+
+
+
+
+
+
+## Meet Error
+
+
+
+###  non-static variable
+
+- `non-static variable cannot be referenced from a static context`
+
+  - static 으로 선언되지 않은 변수는 static 컨텍스트 (함수) 로 부터 참조될 수 없다.
+  - static 으로 선언된 함수 내에서 static 으로 선언되지 않은 변수를 사용했다는 오류메세지이다.
+
+- ```java
+  OrderService orderService = new OrderServiceImpl();
+  
+  // Error
+  Order order = OrderService.createOrder(memberId, "itemA", 10000);
+  
+  // Run
+  Order order = orderService.createOrder(memberId, "itemA", 10000);
+  ```
+
+  - 여기에서 나는 `createOrder`를 하기 위해서 인터페이스에다가 하고 있었다.
+  - 선언해준 `orderService` 에 해주는 것이 맞았다.
