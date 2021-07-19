@@ -64,6 +64,8 @@
     - 주어진 상황으로 어떻게 할지를 본다.
   - then
     - 무엇을 하고 난 다음의 상황을 체크한다.
+- `DisplayName()`
+  - test 에서는 한글로 확인할 수 있다.
 
  
 
@@ -95,9 +97,109 @@
 
 
 
+## 의존관계 분석
+
+- ```java
+  private final MemberRepository memberRepository = new MemoryMemberRepository();
+  ```
+
+  - 이것이 객체지향적으로 잘 구성된 것일까??
+  - 아니다!!
+    - MemberRepository 인 interface 와 MemoryMemberRepository 인 구현체에 의존을 하고 있는 것이다.
+    - 추상에만 의존해야하는데 추상과 구체 둘 다에 의존하는 결과를 초래하게 된다.
+  - MemoryMemberRepository 를 바꾸는 순간 memberRepository를 바꿔야한다!
+
+- 어떻게 인터페이스에만 의존할 수 있을까??
 
 
 
+## 인터페이스 의존 설계
+
+- 구체 클래스를 지워보자!
+  - 지워놓고 보면 nullpointerException 이 날 것이다.
+  - 그러면 어떻게 할까??
+    - 누군가가 주입을 해줘야 한다!
+- 누군가의 역할
+  - 공연을 할 때 배우는 연기를 감독은 감독을 하는 것이 좋다. 즉, 목적에 맞는 일만 하도록 하는 것이 중요하다. 각자의 역할에 충실할 수 있도록 환경을 만들어주는 것이 필요하다.
+
+
+
+### AppConfig (DI)
+
+- AppConfig 는 실제 동작에 필요한 구현객체를 생성한다.
+  생성한 객체 인스턴스의 레퍼런스를 생성자를 통해서 주입(연결) 해준다.
+- 이걸 사용하면 모든 구현 객체가 주입되는 것은 AppConfig 에서 맡게 된다.
+- 클라이언트인 구현체의 입장에서는 의존관계를 외부에서 주입해주는 것 같다고 해서 의존관계 주입, 의존성 주입이라고 한다. (Dependency Injection)
+
+
+
+- ```java
+  // AppConfig
+  public MemberService memberService() {
+    return new MemberServiceImpl(new MemoryMemberRepository());
+  }
+  ```
+
+  - 여기에서 MemoryMemberRepository 가 있다는 것!
+
+- ```java
+  // 구현체
+  private final MemberRepository memberRepository;
+  
+  public MemberServiceImpl(MemberRepository memberRepository) {
+    this.memberRepository = memberRepository;
+  }
+  ```
+
+  - 우리는 이제 구현체에 특정한 것을 넣지 않아도 그것을 사용할 수 있게 된다.
+  - 이것을 우리는 생성자 주입이라고 한다.
+    - 생성자를 통해서 객체에 들어간다고 해서!
+
+- 다수의 구현체를 넣는 것은?
+
+  - ```java
+    public OrderService orderService() {
+      return new OrderServiceImpl
+        (new MemoryMemberRepository(), new FixDiscountPolicy());
+    }
+    ```
+
+    - 상관없다. 맞춰서 넣어주면 된다.
+
+
+
+#### App 실행하기
+
+- ```java
+  // APP
+  
+  AppConfig appConfig = new AppConfig();
+  MemberService memberService = appConfig.memberService();
+  ```
+
+  - AppConfig 에서 나온 것이라면??
+
+    `return new MemberServiceImpl(new MemoryMemberRepository());`
+
+    - 전부 장착되어진 것이 올 것이다.
+
+
+
+#### test 시 주의점
+
+- `@BeforeEach` 사용하기
+
+  - ```java
+    MemberService memberService;
+    
+    @BeforeEach
+    public void beforeEach() {
+      AppConfig appConfig = new AppConfig();
+      memberService = appConfig.memberService();
+    }
+    ```
+
+    - `@BeforeEach` 로 인해서 각 테스트가 시작될 때마다 memberService 를 만들어서 진행한다.
 
 
 
