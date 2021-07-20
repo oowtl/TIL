@@ -203,6 +203,25 @@
 
 
 
+#### 리팩토링
+
+- ```java
+  public MemberService memberService() {
+    return new MemberServiceImpl(MemberRepository());
+  }
+  
+  private MemoryMemberRepository MemberRepository() {
+    return new MemoryMemberRepository();
+  }
+  ```
+
+  - 역할들이 나오고 그것에 대한 구성이 드러나도록 하는 것이 좋다.
+  - 이로서 무엇이 변경되면 그것만 변경해줄 수 있고, 무엇을 가리키고 있는지 쉽게 볼 수 있다.
+
+
+
+
+
 
 
 ## Meet Error
