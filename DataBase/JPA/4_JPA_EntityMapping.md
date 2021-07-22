@@ -91,6 +91,194 @@
 
 
 
+### 매핑 어노테이션
+
+- `@Column`
+- `@Temporal`
+- `@Enumerated`
+- `@Lob`
+- `@Transient`
+  - 특정 컬럼을 DB 와 연결짓지 않는 것
+  - 나는 이거 메모리에서만 사용할거야!
+
+
+
+#### `@Column`
+
+- name : 테이블의 컬럼 이름
+- insertable, updatable
+  - 등록하거나 업데이트를 할 때, 컬럼을 변경할 것인가!
+- nullable
+  - 기본값 true
+  - `nullable=false` -> not null
+- unique
+  - 이 친구는 이름이 랜덤으로 나와서 사용하기 힘들다.
+  - entity 에 직접 주는 방법이 있다.
+- length
+  - 문자열 길이 조건을 부여한다.
+  - String 에만 가능하다.
+- precision, scale
+  - bigint, BigDecimal 타입에서 사용한다.
+  - 자릿수를 정한다.
+
+
+
+#### `@Enumerated`
+
+- 설명
+  - enum 타입은 DB 에 없지만, 설정하는 것으로 사용할 수 있다.
+- value
+  - `EnumType.ORDINAL` 
+    - enum 의 순서를 데이터 베이스에 저장한다.
+      - 이거는 순서가 바뀌면 바뀌는 대로 저장하기 때문에, 값을 수정하면 안된다.
+      - 굉장히 위험한 것이다. 따라서 안쓰는 것이 좋다...
+  - `EnumType.STRING`
+    - enum 의 이름을 데이터 베이스에 저장한다. 
+
+
+
+#### `@Temporal`
+
+- 이거는 조금 구식일지도 몰라
+
+- 우리에게는 
+
+  ```java
+  private LocalDate testLocalDate;
+  private LocalDateTime testLocalDateTime;
+  ```
+
+  이것이 있지..!
+
+
+
+#### `@Lob`
+
+- varchar 보다 긴 것을 넣고 싶을 때 사용한다.
+- 이거는 속성을 지정하는 것이 아니다.
+- 매핑하는 필드 타입에 따라서 다르게 매핑된다.
+  - 문자 : CLOB
+  - 나머지 : BLOB
+
+
+
+#### `@Transient`
+
+- 이것은 아무것도 매핑하고 싶지 않을 때, 사용하는 것이다.
+
 
 
 ## 기본 키 매핑
+
+
+
+### `@id`
+
+- 직접 할당
+
+- 자동 할당(`@GeneratedValue`)
+
+  - 사용 
+
+    - ```java
+      @Id
+      @GeneratedValue(strategy = GenerationType.IDENTITY)
+      ```
+
+  - 전략
+
+    1. `GenerationType.AUTO`
+
+       - DB 방언에 맞게 자동으로 설정한다.
+       - 조금씩 다르게 나와서 확인해보고 사용해야 한다.
+
+    2. `GenerationType.IDENTITY`
+
+       - 기본키 생성을 DB에 위임하는 것
+       - mysql auto_increment
+       - 애매한 점!
+         - null 로 들어오면 그 때 셋팅을 해준다.
+           -> DB 에 들어가야 그 값을 알 수 있다.
+           - 커밋 시점에 알 수 있다는 것이다.
+             그래서 보통 회원가입 같은 생성을 하는 것은 값을 설정하고 persist 를 해주는 것으로 시점의 차이를 없앤다.
+
+    3. `GenerationType.SEQUENCE`
+
+       - 오라클에서 주로 사용
+
+       - 과정
+
+         - `call next value for hibernate_sequence`
+
+           - 이게 기본적인 것이라서 이 친구를 통해서 값을 가져와서 한다.
+
+         - ```java
+           @Entity
+           @SequenceGenerator(name = "member_seq_generator", sequenceName = "member_seq")
+           public class Member {
+           
+             @Id
+             @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq_generator")
+             private Long id;
+           
+           ```
+
+           - 이름을 지어줄 수도 있다.
+
+       - code
+
+         - ```java
+           @Entity
+           @SequenceGenerator(
+                   name = "MEMBER_SEQ_GENERATOR",
+                   sequenceName = "MEMBER_SEQ", //매핑할 DB 시퀀스 이름
+                   initialValue = 1,
+                   allocationSize = 1)
+           public class Member {
+               @Id
+               @GeneratedValue(
+                       strategy = GenerationType.SEQUENCE,
+                       generator = "MEMBER_SEQ_GENERATOR")
+               private Long id;
+           ```
+
+           - `allocationSize`
+             - default = 50
+             - 호출할 때마다 DB 를 많이 불러와서 사용한다.
+             - 1번 을 호출하면 50까지 넣어준다. 그리고 51 을 요청하면 100까지 넣는다.
+
+- 왠만하면 Long 을 사용하는 것이 좋다.
+
+  - integer 와 long 의 성능의 차이는 거의 영향을 주지 않는다.
+  - 10억이 넘어갈 때, 타입을 바꾸는 것이 더 힘드니까 그냥 처음부터 Long 으로 하자.
+
+
+
+### TABLE 전략
+
+- sequence 전략과 유사한 기능인데, 여러 DB에서 지원하는 것이다.
+- 단, 이것은 DB를 건드리는 것이라서 잘 사용하지는 않는다.
+
+
+
+### 권장하는 식별자 전략
+
+- 기본 키에 대한 제약조건
+  - null 이면 안된다.
+  - 유일해야한다.
+  - 변하면 안된다.
+    - 먼 미래까지 변하면 안된다는 것이 포인트이다.
+    - 어떻게 할 수 있을까?
+      - 대리키, 대체키를 사용하자.
+      - 심지어 주민등록번호도 기본 키로 적절하지 않다!
+    - 권장 방법
+      - Long 타입 + 대체 키 + 키 생성 전략 사용
+        - Auto increment
+        - sequence object
+        - 랜덤!
+    - 절대 비즈니스에 키가 들어가면 안된다.
+
+
+
+
+
