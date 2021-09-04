@@ -81,15 +81,102 @@ $ pip install selenium
      - ![스크린샷 2021-09-04 오후 1.21.26](selenium.assets/스크린샷 2021-09-04 오후 1.21.26.png)
        - 빈 창이 나오면 성공이다.
 
-2. 
 
 
 
 
 
+## Import
+
+```python
+# 여러 개의 동작을 체인으로 묶어서 저장하고 실행할 수 있도록 하는 것
+# 마우스 이동, 클릭, 키보드누르기, 드래그앤 드롭 가능
+from selenium.webdriver import ActionChains
+
+# keys : 키보드에 키를 제공하는 것 같다.
+from selenium.webdriver.common.keys import Keys
+# By : 요소를 찾는 데 사용하는 속성
+from selenium.webdriver.common.by import By
+
+# expected_conditions : 예상조건지원 이라고 한다.
+from selenium.webdriver.support import expected_conditions as EC
+# select 요소를 처리하는데 도움을 주는 것 같다. 일일이 선택하지 않아도 되도록 하는 것 같음
+from selenium.webdriver.support.ui import Select
+# WebDriverWait : 대기지원, 요소가 나타나 때까지 대기를 하는 것
+from selenium.webdriver.support.ui import WebDriverWait
+```
 
 
 
+## URL 로 가기
+
+
+
+- `driver.get(url=URL)`
+
+  - 해당하는 url 로 간다
+
+  - ```python
+    URL = "http://www.kyobobook.co.kr/index.laf"
+    
+    driver = webdriverChrome("./chromedriver")
+    driver.get(url=URL)
+    ```
+
+- `driver.current_url`
+
+  - 현재 페이지 url 을 얻을 수 있다.
+
+- `driver.close()`
+
+  - 웹 드라이버 닫기
+
+- `driver.quit()`
+
+  - 웹 드라이버 종료
+
+
+
+## 대기하기
+
+> 브라우저에서 모든 element 를 바로 로드하지는 못한다.
+>
+> 따라서 element 가 없다는 에러를 방지하기 위해서는 기다려주는 것이 필요하다.
+
+
+
+- 암묵적 대기
+
+  - `driver.implicity_wait(time_to_wait=n)`
+
+    - 찾으려는 element 가 로드될 때까지 지정한 시간만큼 대기할 수 있도록 설정한다.
+
+    - 인자는 초 단위
+
+    - Default=0
+
+    - ```python
+      # 5초 동안 element가 로드될 때 까지 기다려준다는 의미
+      driver.implicitly_wait(time_to_wait=5)
+      driver.quit()
+      ```
+
+- 명시적 대기
+
+  - 그냥 강제적으로 몇 초를 기다리게 하는 것도 있지만, 좋지않다.
+
+  - ```python
+    # 명시적 대기
+    try:
+      element = WebDriverWait(driver, 5).until(
+        EC.presence_of_element_located((By.CLASS_NAME, 'box_welcome_personal'))
+      )
+    finally:
+      driver.quit()
+    ```
+
+    - `box_welcome_personal` 이라는 classname을 지닌 것을 기다리는 것이다.
+    - 0.5초에 한번 씩 검사하는 것을 5초간 진행할 것이다. 만약에 찾을 수 있다면 True 를 반환하고, 찾을 수 없다면 False 반환
 
 
 
