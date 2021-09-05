@@ -26,7 +26,7 @@ $ pip install selenium
 
 1. 크롬버전 확인하기
 
-   1. ![스크린샷 2021-09-04 오후 12.49.45](selenium.assets/스크린샷 2021-09-04 오후 12.49.45.png)
+   1. ![img-1](selenium.assets/img-1.png)
       - 크롬 우측 상단 `...` - 도움말 - 크롬정보
 
 2. 크롬 드라이버 파일 다운로드 받기
@@ -34,7 +34,7 @@ $ pip install selenium
    - 해당하는 OS 와 크롬 버전에 맞게 드라이버를 다운로드 받는다.
    - 어디에 해도 상관은 없는 것 같지만 경로가 다르면 여러가지 귀찮은 것들이 생길 수 있으니
      파이썬 파일과 같은 디렉토리에 넣는 것을 추천한다.
-   - ![스크린샷 2021-09-04 오후 12.56.11](selenium.assets/스크린샷 2021-09-04 오후 12.56.11-0727795.png)
+   - ![img-2](selenium.assets/img-2.png)
      - 일단 버전이 완전히 일치하는 것은 없지만 영어를 읽어봐서는 93 류를 사용하라는 것 같다.
    - OS 에 맞는 zip 을 다운받아서 chromedriver 이라는 파일을 얻는다.
 
@@ -78,7 +78,7 @@ $ pip install selenium
 
    - 결과
 
-     - ![스크린샷 2021-09-04 오후 1.21.26](selenium.assets/스크린샷 2021-09-04 오후 1.21.26.png)
+     - ![img-3](selenium.assets/img-3.png)
        - 빈 창이 나오면 성공이다.
 
 
@@ -180,11 +180,134 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 
+## 엘레멘트 찾기
+
+> 여러가지 방법이 있다는 점!
+
+- `find_element_by_종류()`
+
+  - 이것은 하나만 나오는 것이다.
+    아마 html 문서에서 가장 먼저 나오는 것이 출력될 것이다.
+
+  - ```python
+    driver.find_element_by_xpath('html/body/div[2]/div[1]') # Xpath 로 접근하기
+    driver.find_element_by_class_name('gnb_main') # 클래스 이름 / 클래스는 한 개씩 하도록!
+    driver.find_element_by_id('id_name') # id
+    driver.find_element_by_link_text('국내도서') # 링크가 달려있는 텍스트에 접근하다.
+    driver.find_element_by_css_selector('.gnb_main > .item_1 > a') # css 선택자
+    driver.find_element_by_tag_name('ul') # 태그 이름으로 접근
+    ```
+
+    - 보통 xpath 를 통해서 접근을 한다.
+    - xPath 는 크롬에서 해결할 수 있다.
+
+- `find_elements_by_종류()`
+
+  - 해당하는 것을 모두 출력한다.
+    list 형식으로 출력된다.
+
+  - ```python
+    driver.find_elements_by_xpath('html/body/div[2]/div[1]') # Xpath 로 접근하기
+    driver.find_elements_by_class_name('gnb_main') # 클래스 이름 / 클래스는 한 개씩 하도록!
+    driver.find_elements_by_id('id_name') # id
+    driver.find_elements_by_link_text('국내도서') # 링크가 달려있는 텍스트에 접근하다.
+    driver.find_elements_by_css_selector('.gnb_main > .item_1 > a') # css 선택자
+    driver.find_elements_by_tag_name('ul') # 태그 이름으로 접근
+    ```
+
+  - ```python
+    p1 = driver.find_elements_by_xpath('/html/body/div[3]/div[1]/div[1]/div[3]/ul[1]')
+    print(p1)
+    
+    # [<selenium.webdriver.remote.webelement.WebElement (session="720346000cb8894448900b8332d0e007", element="a6003046-e22b-427c-b5be-0a56cce1ae6f")>]
+    ```
+
+
+
+### xPath 얻기
+
+> 문법이 존재한다. 하지만 크롬은 위대하다.
+
+- ![img-4](selenium.assets/img-4.png)
+  - 해당하는 태그 우클릭 - Copy - Copy full XPath
+
+
+
+## 행동하기
+
+> 셀레니움은 실제로 유저가 움직이는 것처럼 움직인다.
+
+
+
+### 클릭하기
+
+
+
+- `click()`
+
+  - ```python
+    domestic_book = driver.find_elements_by_xpath('/html/body/div[3]/div[1]/div[1]/div[3]/ul[1]/li[1]/a')
+    domestic_book[0].click() # find_elements_by_xpath() 는 리스트라서 인덱스를 지정해줘야 한다.
+    ```
+
+  - 여기에서 발생할 수 있는 에러
+
+    ```shell
+    $ [ERROR:device_event_log_impl.cc(214)] USB: usb_device_handle_win.cc:1048 Failed to read descriptor from node connection: 시스템에 부착된 장치가 작동하지 않습니다. (0x1F)
+    ```
+
+    - 해결방법
+      - 이 에러메시지 위를 보면 이미 실행은 다 된다. 로그만 지우던지 하면 된다.
+      
+        ```python
+        # 에러메시지 해결 : 장치가 작동하지 않습니다.
+        options = webdriver.ChromeOptions()
+        options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        
+        driver = webdriver.Chrome("./chromedriver", options=options) # options 로 추가해줘야한다.
+        ```
+      
+        
 
 
 
 
 
+## 값을 얻어보자!
+
+
+
+1. `.text`
+
+   - 가지고 오는 태그에 text 가 있다면 출력해준다.
+
+   - ```python
+     t2 = driver.find_elements_by_xpath('//*[@id="main_snb"]/div[1]/ul[1]/li[1]/ul/li[1]/a')
+     print(t2[0].text)
+     ```
+
+     - 이렇게 하면 됩니당
+
+2. `ActionChains`
+
+   - 셀레니움은 화면에 나오는 것에 대해서 크롤링을 하는 것 같다.
+     html 문서에서 받아오는 것이 아닌듯하다.
+
+   - 따라서 마우스 hover 를 통해서 얻을 수 있는 것을 그렇게 얻어야 한다.
+
+   - ```python
+     domestic_menu = driver.find_element_by_xpath('//*[@id="main_snb"]/div[1]/ul[1]/li[1]/a')
+     
+     # 필요하다... 이건 웹에서 보여야 하는 것 같다. html 으로는 아닌듯
+     actions = ActionChains(driver)
+     actions.move_to_element(domestic_menu)
+     actions.perform()
+     
+     t2 = driver.find_elements_by_xpath('//*[@id="main_snb"]/div[1]/ul[1]/li[1]/ul/li[1]/a')
+     print(t2[0].text)
+     ```
+
+     - 마우스를 호버해서 나오면 제대로 값이 받아진다.
 
 
 
@@ -201,4 +324,5 @@ from selenium.webdriver.support.ui import WebDriverWait
 - https://ddolcat.tistory.com/674
 - https://chancoding.tistory.com/136
 - https://greeksharifa.github.io/references/2020/10/30/python-selenium-usage/#install
+- https://pythondocs.net/selenium/%EC%85%80%EB%A0%88%EB%8B%88%EC%9B%80-%ED%81%AC%EB%A1%A4%EB%9F%AC-%EA%B8%B0%EB%B3%B8-%EC%82%AC%EC%9A%A9%EB%B2%95/
 
