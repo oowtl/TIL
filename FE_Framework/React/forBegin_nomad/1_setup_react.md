@@ -16,8 +16,6 @@ npx create-react-app 'folder name'
 
 
 
-
-
 ### 설치에러
 
 ```bash
