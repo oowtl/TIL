@@ -2,13 +2,106 @@
 
 
 
+## Ubuntu 20.04
+
+> Phusion-passenger 공식 사이트 참조
+>
+> https://www.phusionpassenger.com/docs/tutorials/deploy_to_production/installations/oss/aws/node/nginx/
+>
+> https://www.phusionpassenger.com/docs/tutorials/deploy_to_production/deploying_your_app/oss/aws/node/nginx/
 
 
-## 1. Phusion Passenger 설치하기
+
+
+
+### Install
+
+#### 1. Install Passenger Packages
+
+```bash
+# Install nginx
+sudo apt-get install nginx
+
+# Install our PGP key and add HTTPS support for APT
+sudo apt-get install -y dirmngr gnupg
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 561F9B9CAC40B2F7
+sudo apt-get install -y apt-transport-https ca-certificates
+
+# Add our APT repository
+sudo sh -c 'echo deb https://oss-binaries.phusionpassenger.com/apt/passenger focal main > /etc/apt/sources.list.d/passenger.list'
+sudo apt-get update
+
+# Install Passenger + Nginx module
+sudo apt-get install -y libnginx-mod-http-passenger
+```
+
+
+
+#### 2. check install package and restart nginx
+
+```bash
+# check!
+if [ ! -f /etc/nginx/modules-enabled/50-mod-http-passenger.conf ]; then sudo ln -s /usr/share/nginx/modules-available/mod-http-passenger.load /etc/nginx/modules-enabled/50-mod-http-passenger.conf ; fi
+
+sudo ls /etc/nginx/conf.d/mod-http-passenger.conf
+
+# restart!
+sudo service nginx restart
+```
+
+
+
+#### 3. check installation
+
+```bash
+# Validate install running
+sudo /usr/bin/passenger-config validate-install
+
+# result
+ * Checking whether this Passenger install is in PATH... ✓
+ * Checking whether there are no other Passenger installations... ✓
+```
+
+
+
+### Nginx configuration
+
+
+
+#### 1. open conf file
+
+```bash
+# not correct directory
+sudo vi /opt/nginx/conf/nginx.conf
+
+# correct
+# sudo => permission denied!
+sudo find / -name nginx.conf
+/etc/nginx/nginx.conf
+
+sudo vi /etc/nginx/nginx.conf
+```
+
+
+
+- 12.17 기준 pushion passenger 까지는 성공했지만 git 으로 불러오진 못함
+
+
+
+
+
+
+
+## AMI (Fail)
+
+
+
+### 1. Phusion Passenger 설치하기
 
 ```bash
 # Pushion Passenger 다운로드
 wget http://s3.amazonaws.com/phusion-passenger/releases/passenger-5.3.6.tar.gz
+# 해당 버전은 21.12.15 기준으로 에러가 나서 다음 버전으로 실행하기를 권장
 
 # /var 디렉토리가 root 계정 소유이기 때문에 sudo
 sudo mkdir /var/passenger
@@ -20,7 +113,7 @@ tar -xzvf passenger-5.3.6.tar.gz -C /var/passenger/
 
 
 
-## 2. rvm 설치하기
+### 2. rvm 설치하기
 
 > Ruby Version Manager
 
@@ -51,7 +144,7 @@ rvm requirments run
 
 
 
-### gpg
+#### gpg
 
 - GPG, PGP 는 강력한 암호화 프로그램으로써 RSA 를 사용해서 암호화를 한다.
 - 이메일에 주로 사용된다.
@@ -60,7 +153,7 @@ rvm requirments run
 
 
 
-## 3. 루비 설치하기
+### 3. 루비 설치하기
 
 ```bash
 # Ruby 2.4.3 install
@@ -69,11 +162,11 @@ rvm install 2.4.3
 
 
 
-## 4. Passenger nginx module 설치하기
+### 4. Passenger nginx module 설치하기
 
 
 
-### 변수설정하기
+#### 변수설정하기
 
 ```bash
 # passener 의 경로를 $PATH 변수에 등록하는 것
@@ -84,7 +177,7 @@ source ~/.bash_profile
 
 
 
-### 설치하기
+#### 설치하기
 
 ```bash
 # start installer
@@ -196,3 +289,31 @@ export rvmsudo_secure_path=1
   - 5.3.6버전에서 나오는 에러이고 5.3.7 버전에서 개선이 된 것으로 확인이 된다.
     따라서 해당하는 버전에 맞게 진행해볼 예정이다.
   - 참조 : https://github.com/phusion/passenger/issues/2139
+
+
+
+
+
+### 5. Phusion Passenger 재설치
+
+```bash
+# 5.3.7 download
+wget http://s3.amazonaws.com/phusion-passenger/releases/passenger-5.3.7.tar.gz
+
+# 5.3.7 버전으로 다운로드 받았지만 에러가 발생해서 공식사이트에서 소개하는 방식으로 하고자 함
+```
+
+
+
+- 참조 : https://www.phusionpassenger.com/library/install/nginx/install/oss/rubygems_rvm/
+
+- 공식사이트도 안된다.
+  중요한 점은 영문을 모르겠다는 것!
+  어느 부분이 에러가 나는지 모르겠다..
+
+
+
+
+
+
+

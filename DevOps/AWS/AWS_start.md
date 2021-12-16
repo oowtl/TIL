@@ -2,11 +2,40 @@
 
 
 
+## nvm 을 이용한 Node.js 설치하기
+
+```bash
+sudo curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+
+. ~/.nvm/nvm.sh
+
+# 10.13.0 버전 다운로드
+nvm install 10.13.0
+```
+
+
+
+
+
+
+
 ## 소스코드 배포
 
 
 
+### ubuntu
+
 ```bash
+# ubuntu
+sudo apt-get install git
+```
+
+
+
+### AMI
+
+```bash
+
 sudo yum install curl-devel expat-devel gettext-devel openssl-devel zlib-devel
 ```
 
