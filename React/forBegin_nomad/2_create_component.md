@@ -9,7 +9,7 @@
 - EX
 
   - ```react
-    eactDOM.render(
+    reactDOM.render(
       <React.StrictMode>
         <App />
       </React.StrictMode>,
