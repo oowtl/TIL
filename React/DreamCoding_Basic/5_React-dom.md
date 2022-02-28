@@ -4,8 +4,6 @@
   그 말은 우리가 작성한 component들을 html 과 연결해줘야할 필요가 있다는 것이다.
   그걸 연결해주는 것이 `react-dom`이다.
 
-
-
 ```html
 <!-- public / index.html-->
 <body>
