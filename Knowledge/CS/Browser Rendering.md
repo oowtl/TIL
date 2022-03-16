@@ -10,6 +10,8 @@
 
 [디자이너의 기록 - Rendering](https://designer-ej.tistory.com/entry/Web-Rendering-DOMCSSOMRender-Tree)
 
+[velog/@ouo_yoonk - crp](https://velog.io/@ouo_yoonk/CRP)
+
 
 
 ## 중요 렌더링 경로 ( CRP )
