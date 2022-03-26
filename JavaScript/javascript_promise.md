@@ -47,10 +47,6 @@ let promise = new Promise(function(resolve, reject){
 
   처음에는 `undefined` 였다가 `resolve(value)`가 호출되면 `value`로 `reject(error)`가 호출되면 `error`로 변한다. 
 
-
-
-
-
 `Promise` 객체에는 `"pending"`, `"fullfilled"`, `"rejected"` 총 3개의 상태가 존재한다.
 
 - `"pending"` : 이행하지도 거부하지도 않은 초기상태
@@ -63,6 +59,10 @@ let promise = new Promise(function(resolve, reject){
 
 - executor 는 `Promise`의 상태를 둘 중 하나로 변화시킨다.
 
+
+
+#### fullfilled promise
+
 ```js
 let promise = new Promise(function(resolve, reject) {
     setTimeout(() => resolve("done"), 1000);
@@ -74,6 +74,10 @@ let promise = new Promise(function(resolve, reject) {
   2. executor에 의해서 처리가 시작된지 1초 후에 ( `setTimeout` 에 의하여 ) `resolve("done")`이 호출되고 결과가 만들어진다.
   3. `promise`객체의 상태가 변한다.
 
+![promise_resolve](javascript_promise.assets/promise_resolve.png)
+
+- `resolve("done")`이 호출된 상황을 나타낸 그림
+- executor에서 처리된 부분이 성공적인 `Promise` 객체는 fullfilled promise (약속이 이행된 프라미스 객체) 라고 불린다. 
 
 
 
@@ -81,39 +85,74 @@ let promise = new Promise(function(resolve, reject) {
 
 
 
-
-
-
-## 사용방법
+#### rejected promise
 
 ```js
-let promise = new Promise(function (resolve, reject ) {
-    resolve();
+let promise = new Promise(function(resolve, reject){
+    setTimeout(() => reject(new Error("Error !")), 1000);
 });
-promise.then(() => {
-    console.log('then!')
-});
-// then!
-// Promise {<fulfilled>: undefined}
-promise.catch(() => {
-    console.log('catch!')
-});
-// Promise {<fulfilled>: undefined}
+// VM628:2 Uncaught (in promise) Error: Error ! at <anonymous>:2:29
 ```
 
+- 처리 과정
+  1. executor 는 자동적으로, 즉각적으로 호출된다.
+  2. executor에 의해서 처리가 시작된지 1초 후에 ( `setTimeout` 에 의하여 ) `reject(Error)`가 호출되고 에러가 만들어진다.
+  3. `promise`의 상태가 변한다.
+
+![promise_reject](javascript_promise.assets/promise_reject.png)
+
+- `resolve(error)` 가 된 `promise`를 그린 그림
+- executor 부분에서 처리된 부분이 실패한 `promise`객체는 rejected (거절된) 상태에 있다고 표현된다.
+
+## 주의점
+
+### 프라미스는 성공또는 실패로만 나뉜다.
+
+executor는 반드시 `resolve` `reject` 중 하나를 호출해야한다.
+또한 변경된 상태는 더 이상 변하지 않는다.
+
+```js
+let promise = new Promise(function(resolve, reject){
+   resolve("done"); // 동작함
+    reject(new Error("error!")); // 무시
+    setTimeout(() => resolve("do!")); // 무시
+});
+promise // Promise {<fulfilled>: 'done'}
+```
+
+- 처리가 끝난 `promise` 에 `resolve`, `reject`를 호출해도 동작하지 않는다.
+
+### state, result 는 내부 프로퍼티 이다.
+
+- state, result 는 promise 객체의 내부 프로퍼티이다.
+  따라서 개발자가 접근하기 어렵다.
+  - 접근하기 위해서는 `.then`, `.catch`, `.finally` 메서드를 사용하는 것이 필요하다.
+
+## Promise의 결과를 받아 줄 `.then`, `.catch`, `.finally` 
+
+`promise` 객체는 executor와 그 실행결과나 에러를 받을  소비함수를 이어주는 역할을 한다.
+
+여기에서 소비함수는 `.then`, `.catch`, `.finally`  를 말한다.
 
 
 
+### `.then`
+
+executor 에서 결과가 실행되었을 때를 연결해주는 메서드
 
 
 
+ 
 
+```js
+promise.then(
+  function(result) {/* 결과를 처리하는 부분 */},
+  function(error) {/* 에러를 처리하는 부분 */}
+);
+```
 
-
-
-
-
-
+- `.then`의 첫 번째 인수는 `promise`가 이행된(fullfilled) 상태일 때, 실행되는 함수이다.
+- `.then`의 두 번째 인수는 `promise`가 거부된(rejected) 상태일 때, 실행되는 함수이다.
 
 
 
