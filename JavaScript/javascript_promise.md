@@ -140,10 +140,6 @@ promise // Promise {<fulfilled>: 'done'}
 
 executor 에서 결과가 실행되었을 때를 연결해주는 메서드
 
-
-
- 
-
 ```js
 promise.then(
   function(result) {/* 결과를 처리하는 부분 */},
@@ -154,7 +150,85 @@ promise.then(
 - `.then`의 첫 번째 인수는 `promise`가 이행된(fullfilled) 상태일 때, 실행되는 함수이다.
 - `.then`의 두 번째 인수는 `promise`가 거부된(rejected) 상태일 때, 실행되는 함수이다.
 
+```js
+let promise = new Promise(function (resolve, reject) {
+    setTimeout(() => {
+        resolve("done!"), 1000
+    })
+})
+promise.then(
+    result => alert(result), // 실행된다.
+    error => alert(error) // 실행되지 않음.
+);
+Promise {<fulfilled>: undefined}
+```
 
+- `promise`가 fullfilled 상태일 때는  `then`의 첫 번째 인수에 있는 부분이 실행된다.
+- 작업이 성공한 경우만 다루고 싶다면, 에러처리를 하지 않는다면 `.then`에 인수를 하나만 전달하면 된다.
+
+```js
+let promise = new Promise(function (resolve, reject) {
+    setTimeout(() => {
+        reject(new Error("Error!!")), 1000
+    })
+})
+promise.then(
+    result => alert(result),
+    error => alert(error) // alert 가 실행된다.
+);
+Promise {<fulfilled>: undefined}
+```
+
+- `promise`가 rejected 상태일 때는  `then`의 두 번째 인수에 있는 부분이 실행된다.
+
+### `.catch`
+
+에러가 발생하는 경우를 다룰 때, 사용하는 메서드
+
+`.then(null, errorHandlerFunction)` 의 형식으로 `.then`의 첫 번째 인수로 `null`을 전달해도 된다.
+(동일하게 작동한다.)
+
+```js
+let promise = new Promise(function (resolve, reject) {
+    setTimeout(() => {
+        reject(new Error("Error!!")), 1000
+    });
+});
+promise.catch(alert); // alert 가 실행된다.
+Promise {<fulfilled>: undefined}
+```
+
+- `.catch(handlerFunctoin)` === `.then(null, handlerFucntion)`
+  문법이 다르다는 것 빼고는 완벽하게 같다.
+
+### `finally`
+
+프라미스가 처리되면 항상 실행되는 메서드
+
+`.finally( handlerFunction )` = `.then( handlerFunction, handlerFunction )`
+
+```js
+new Promise((resolve, reject) => {
+    setTimeout(() => { resolve("Hello!")}, 1000);
+})
+.finally(() => {console.log("finally")})
+.then( result => console.log(result));
+Promise {<pending>}
+// finally
+// Hello!
+```
+
+- `finally` 와 `then`의 차이점
+  - `finally` 에는 인수가 없다.
+    `finally`는 절차를 마무리하는 보편적인 동작을 하기 때문에 성공 실패여부를 몰라도 된다.
+  - `finally` 핸들러는 자동으로 다음 핸들러에 결과와 에러를 전달한다.
+
+## 왜 `promise`를 사용하는가?
+
+1. 흐름이 자연스러워 진다.
+   - 결과에 따라서 `.then`, `.catch`를 사용하면 된다. ( callback 함수는 호출하기 전에 호출할 것에 대해서 미리 알아야 한다. )
+2. 원하는 만큼 `.then`을 붙여주면 된다.
+   - 하나 이상으로 사용할 수 있다. ( callback 은 하나만 가능하다. )
 
 
 
