@@ -132,15 +132,95 @@ new Move()
 
 - 클래스 안의 메서드 앞에 `async`를 붙여줄 수 있다.
 
+## 에러 핸들링
+
+`promise`가 정상적으로 이행되면 `await promise`는 프라미스 객체의 `result`에 저장된 값을 반환한다.
+`promise`가 거부되면 (`reject`) `throw` 문을 작성한 것처럼 에러가 던져진다.
+
+```js
+async function f() {
+    await Promise.reject(new Error("Error!!!"));
+};
+f();
+Promise {<rejected>: Error: Error!!!
+    at f (<anonymous>:2:26)
+    at <anonymous>:1:1}
+```
+
+```js
+async function f() {
+    throw new Error("throw Error");
+};
+f();
+Promise {<rejected>: Error: throw Error
+    at f (<anonymous>:2:11)
+    at <anonymous>:1:1}
+```
+
+- 두 개의 구문은 동일한 내용을 가진다.
+- `promise` 가 거부되기 전에 약간 시간이 지체가 되는 경우가 생긴다.
+  그런 경우에는 `await`가 에러를 던지기 전에 지연(`pending`)이 발생한다.
+
+```js
+async function f() {
+    try {
+        let response = await fetch("idontknow");
+        let user = await response.json();
+    } catch (err) {
+        console.log(err);
+    }
+};
+f();
+// Promise {<pending>}
+// GET https://ko.javascript.info/idontknow 404
+// SyntaxError: Unexpected token < in JSON at position 0
+```
+
+- 여러 줄의 코드를 try 로 감싸는 것도 가능하다.
+- `catch`부분에서 `fetch`, `response.json` 부분에서 발생한 에러를 전부 처리한다.
+
+```js
+async function f() {
+    let response = await fetch("howAreYou");
+};
+f().catch(alert); // f()는 거부 상태의 프라미스이다.
+// Promise {<pending>}
+// GET https://ko.javascript.info/howAreYou 404
+```
+
+- `async` 함수 밖에서 `.catch`를 추가하는 것으로 거부된(`reject`) 프라미스를 처리할 수 있다.
 
 
 
+## `Promise.all` & `async`, `await`
 
+ 여러 개의 프라미스가 모두 처리되길 기다려야 하는 상황이라면?
+`Promise.all`로 감싸고 여기에 `await`를 붙여서 사용할 수 있다.
 
+```js
+let reuslts = await Promise.all([
+	fetch(url1),
+	fetch(url2),
+  fetch(url3),
+  ...
+]);
+```
 
+- 실패한 프라미스는 `Promise.all`로 들어간다.
+  에러 때문에 생긴 예외는 `try...catch` 로 감싸서 잡을 수 있다.
 
+## 요약
 
+function 앞의 `async` 키워드의 효과
 
+1. 이 함수는 언제나 `Promise`를 반환한다.
+2. 함수 안에서 `await`를 사용할 수 있다.
+
+`Promise` 앞에 `await` 키워드를 붙이면 자바스크립트는 프라미스가 처리될 때까지 대기한다.
+처리가 완료되면 2가지 동작으로 나뉜다.
+
+1. 에러 발생 : 예외가 생성된다. ( 에러가 발생한 장소에서 `throw error`를 호출한 것과 동일하다. )
+2. 에러 미발생 : `promise` 객체의 result 값을 반환한다.
 
 
 
